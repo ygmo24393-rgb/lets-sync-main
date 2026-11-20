@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LET'S SYNC! — Main</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="home-page">
+    <section class="home-hero" aria-label="TYPE interaction">
+      <!-- 인터랙션 캔버스가 이 안(Shadow DOM)에 그려짐 -->
+      <div class="type-interaction" id="type-interaction" role="group" aria-label="TYPE interaction" data-node-active="false"></div>
+
+      <div class="home-hero-overlay">
+        <p class="home-hero-hint">
+          <span class="home-hero-hint-default">점 위에 마우스를 올려보세요!</span>
+          <span class="home-hero-hint-active">점과 점을 연결해 SYNC를 경험해 보세요!</span>
+        </p>
+        <img class="home-hero-title" src="assets/heroTitle.svg" alt="LET’S SYNC!" width="530" height="202" draggable="false">
+        <div class="home-hero-info">
+          <div class="home-hero-summary">
+            <p class="home-hero-info-heading"><span>제33회 계원조형예술제</span></p>
+            <p data-font="display"><span>2026 Delight Insight : LET’S SYNC!</span></p>
+            <p><span>계원예술대학교 디지털미디어디자인과 졸업전시회</span></p>
+          </div>
+          <div class="home-hero-schedule">
+            <p class="home-hero-info-heading" data-font="display"><span>LET’S EXHIBIT!</span></p>
+            <p><span>11. 20. ( FRI ) - 22. ( SUN )</span></p>
+            <p><span>계원예술대학교 디자인관 5층</span></p>
+          </div>
+          <div class="home-hero-schedule">
+            <p class="home-hero-info-heading" data-font="display"><span>LET’S OPEN!</span></p>
+            <p><span>11. 20. ( FRI ) PM 4:00</span></p>
+            <p><span>계원예술대학교 디자인관 5층</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 글자 SVG 89개 (data URI, file://로 열어도 동작하도록) -->
+  <script src="type-assets.js"></script>
+  <!-- 인터랙션 엔진 -->
+  <script src="type-interaction.js"></script>
+  <script>
+    // mountTypeInteraction(호스트 요소, 에셋맵, 배치 시드) → 정리(unmount) 함수 반환
+    const destroy = mountTypeInteraction(document.getElementById('type-interaction'), window.TYPE_ASSETS);
+  </script>
+</body>
+</html>
