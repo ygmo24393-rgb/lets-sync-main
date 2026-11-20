@@ -394,9 +394,9 @@ function Ww({
       s = n * Math.cos(a) - i * Math.sin(a),
       c = n * Math.sin(a) + i * Math.cos(a);
     g += 1.1 + o() * 1.9;
-    let l = Math.cos(g) * 170,
-      u = Math.sin(g) * 170,
-      d = 490 + o() * 120;
+    let l = Math.cos(g) * 90,
+      u = Math.sin(g) * 90,
+      d = 300 + o() * 70;
     ((e.vx = -s * d + l),
       (e.vy = -c * d + u),
       (t.vx = s * d + l),
@@ -417,8 +417,8 @@ function Ww({
       }
     }
     let m = h % 2 ? 1 : -1;
-    ((e.spin = m * (1.7 + o() * 1.3)),
-      (t.spin = -m * (2.1 + o() * 1.5)),
+    ((e.spin = m * (1.0 + o() * 0.8)),
+      (t.spin = -m * (1.2 + o() * 0.9)),
       r(e.team, e),
       r(t.team, t));
   }
@@ -471,14 +471,14 @@ function Ww({
         j = S / T,
         ee = w / T,
         N = f - p,
-        P = N < 1.1 ? 0 : 950; // 짝에게 다시 끌려오기 전 탐색 시간
+        P = N < 1.1 ? 0 : 520; // 짝에게 다시 끌려오기 전 탐색 시간
       ((u.vx += j * P * x),
         (u.vy += ee * P * x),
         (g.vx -= j * P * x),
         (g.vy -= ee * P * x));
       for (let e of s) {
         let t = Math.hypot(e.vx, e.vy);
-        (t > 900 && ((e.vx *= 900 / t), (e.vy *= 900 / t)),
+        (t > 560 && ((e.vx *= 560 / t), (e.vy *= 560 / t)),
           (e.team.currentX += e.vx * x),
           (e.team.currentY += e.vy * x),
           (e.angle += e.spin * x));
@@ -526,7 +526,7 @@ function Ww({
           let f = s.x - i.team.currentX,
             p = s.y - i.team.currentY,
             m = Math.hypot(f, p) || 1,
-            h = Math.max(680, Math.min(900, Math.hypot(i.vx, i.vy) * 1.15)),
+            h = Math.max(360, Math.min(500, Math.hypot(i.vx, i.vy) * 0.9)),
             g = a.contactResponse,
             v = g?.idleVX ?? (a.velocityX || 0),
             y = g?.idleVY ?? (a.velocityY || 0),
@@ -540,7 +540,7 @@ function Ww({
               homeX: g?.homeX ?? a.currentX,
               homeY: g?.homeY ?? a.currentY,
               angle: o.angle || 0,
-              spin: -Math.sign(i.spin || 1) * 3.8,
+              spin: -Math.sign(i.spin || 1) * 2.2,
               age: 0,
               otherId: i.team.id,
             };
@@ -843,6 +843,40 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
       );
     });
   });
+  // ===== MORPH: 각 글자가 자기 변형 모양들 사이를 계속 천천히 바뀜 =====
+  var MORPH_NAMES = [`L`, `E`, `T`, `S1`, `S2`, `Y`, `N`, `C`],
+    MORPH = MORPH_NAMES.map(function (nm, id) {
+      var pool = [O[id]],
+        img08 = new Image();
+      img08.src = n[nm + `/` + nm + `08.svg`] || ``;
+      img08.src && pool.push(img08);
+      Object.keys(te).forEach(function (key) {
+        var ab = key.split(`-`).map(Number);
+        ab[0] === id ? pool.push(te[key][0]) : ab[1] === id && pool.push(te[key][1]);
+      });
+      return { pool: pool, from: null, p: 1, wait: 1.5 + id * 0.7 + Math.random() * 2 };
+    });
+  function morphTick(t, dt) {
+    for (var id = 0; id < MORPH.length; id++) {
+      var mo = MORPH[id];
+      if (mo.p < 1) {
+        mo.p = Math.min(1, mo.p + dt / 0.9);
+        mo.p >= 1 && (mo.from = null);
+        continue;
+      }
+      if (G && (G.teamA === R[id] || G.teamB === R[id])) continue;
+      mo.wait -= dt;
+      if (mo.wait > 0) continue;
+      mo.wait = 3 + Math.random() * 3;
+      var ready = mo.pool.filter(function (im) {
+        return im !== O[id] && im.complete && im.naturalWidth;
+      });
+      if (!ready.length) continue;
+      mo.from = O[id];
+      mo.p = 0;
+      O[id] = ready[Math.floor(Math.random() * ready.length)];
+    }
+  }
   function F(e, t) {
     if (!G) return null;
     var n = t - G.born;
@@ -1946,9 +1980,10 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
             ? Math.min(f, p)
             : Math.min(1, r.age / 0.08, Math.max(0, (0.78 - r.age) / 0.2), p);
       }
-      function m(e, t) {
+      var mo = MORPH[t];
+      function m(e, t, own) {
         if (!(t <= 0)) {
-          var r = e === O[n.id] ? k[n.id] : E,
+          var r = own || e === O[n.id] ? k[n.id] : E,
             i = Math.min(r / e.naturalWidth, r / e.naturalHeight),
             a = e.naturalWidth * i,
             o = e.naturalHeight * i;
@@ -1958,7 +1993,9 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
       (l.save(),
         l.translate(i, a),
         l.rotate((A[t] * Math.PI) / 180 + (r.angle || 0)),
-        m(s, 1 - u),
+        mo && mo.from && mo.p < 1
+          ? (m(mo.from, (1 - mo.p) * (1 - u), !0), m(s, mo.p * (1 - u)))
+          : m(s, 1 - u),
         c && m(c, u),
         l.restore());
     }
@@ -2383,7 +2420,7 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
     if (AUTO.dot) {
       AUTO.age += n;
       var a = AUTO.dot, b = AUTO.target;
-      if (G) { autoRelease(); AUTO.wait = 1.2 + Math.random() * 1.0; return; }
+      if (G) { autoRelease(); AUTO.wait = 2.2 + Math.random() * 1.6; return; }
       if (AUTO.age > 5) { autoRelease(); AUTO.wait = 0.6; return; }
       var k = 1 - Math.exp(-(1.6 + AUTO.age * 2.2) * n);
       a.freeDragX += (b.x - a.freeDragX) * k;
@@ -2413,6 +2450,7 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
       (H.worldX = H.x + z.x),
       (H.worldY = H.y + z.y));
     autoTick((e - De) / 1e3, n);
+    morphTick((e - De) / 1e3, n);
     var r;
     (G && t > G.born + G.duration && Ke(t, 0),
       ze(t),
