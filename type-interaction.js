@@ -2494,6 +2494,7 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
     (e.clientWidth !== I || e.clientHeight !== ie) && ut();
   });
   e.__autoSync = AUTO;
+  AUTO.letters = R;
   return (
     dt.observe(e),
     se(),
