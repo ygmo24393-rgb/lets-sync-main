@@ -2368,9 +2368,9 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
     if (AUTO.dot) {
       AUTO.age += n;
       var a = AUTO.dot, b = AUTO.target;
-      if (G) { autoRelease(); AUTO.wait = 0.4 + Math.random() * 0.8; return; }
-      if (AUTO.age > 3) { autoRelease(); AUTO.wait = 0.3; return; }
-      var k = 1 - Math.exp(-(3.2 + AUTO.age * 6) * n);
+      if (G) { autoRelease(); AUTO.wait = 1.2 + Math.random() * 1.0; return; }
+      if (AUTO.age > 5) { autoRelease(); AUTO.wait = 0.6; return; }
+      var k = 1 - Math.exp(-(1.6 + AUTO.age * 2.2) * n);
       a.freeDragX += (b.x - a.freeDragX) * k;
       a.freeDragY += (b.y - a.freeDragY) * k;
       a.x = a.freeDragX; a.y = a.freeDragY;
