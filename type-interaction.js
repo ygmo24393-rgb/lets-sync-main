@@ -401,6 +401,21 @@ function Ww({
       (e.vy = -c * d + u),
       (t.vx = s * d + l),
       (t.vy = c * d + u));
+    // EXPLORE: 튕겨나갈 때 짝이 아닌 다른 글자 쪽으로 방향을 틀어서 그 글자와도 부딪히게 함
+    let others = S.map((q) => q.team).filter((q) => q !== e.team && q !== t.team);
+    if (others.length) {
+      let used = null;
+      for (let w of [e, t]) {
+        let pool = others.filter((q) => q !== used),
+          tg = pool[Math.floor(o() * pool.length)];
+        used = tg;
+        let dx = tg.currentX - w.team.currentX,
+          dy = tg.currentY - w.team.currentY,
+          dl = Math.hypot(dx, dy) || 1,
+          sp = Math.hypot(w.vx, w.vy);
+        ((w.vx += ((dx / dl) * sp - w.vx) * 0.8), (w.vy += ((dy / dl) * sp - w.vy) * 0.8));
+      }
+    }
     let m = h % 2 ? 1 : -1;
     ((e.spin = m * (1.7 + o() * 1.3)),
       (t.spin = -m * (2.1 + o() * 1.5)),
@@ -456,7 +471,7 @@ function Ww({
         j = S / T,
         ee = w / T,
         N = f - p,
-        P = N < 0.32 ? 0 : 950;
+        P = N < 1.1 ? 0 : 950; // 짝에게 다시 끌려오기 전 탐색 시간
       ((u.vx += j * P * x),
         (u.vy += ee * P * x),
         (g.vx -= j * P * x),
@@ -1783,7 +1798,7 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
         teamA: e,
         teamB: t,
         born: i,
-        duration: 5.15,
+        duration: 7,
         spin: Math.random() < 0.5 ? -1 : 1,
         phase: Math.random() * Math.PI * 2,
       }));
