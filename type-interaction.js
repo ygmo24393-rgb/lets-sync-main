@@ -1136,7 +1136,7 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
         (H.worldX = n.x),
         (H.worldY = n.y),
         (H.active = !0),
-        U)
+        U && U !== AUTO.dot)
       ) {
         if (
           ((U.x = n.x),
