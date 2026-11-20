@@ -1388,7 +1388,7 @@ function Kw({ host: e, canvas: t, assetMap: n, placementSeed: r }) {
     ((z.x += (z.targetX - z.x) * 0.0065), (z.y += (z.targetY - z.y) * 0.0065));
   }
   function Me() {
-    if (U) {
+    if (U && U !== AUTO.dot) {
       if (
         ((U.x = H.worldX),
         (U.y = H.worldY),
